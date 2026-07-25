@@ -3,6 +3,9 @@ name: Build GPU Kernel
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
   workflow_dispatch:
     inputs:
       kernel_version:
