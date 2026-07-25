@@ -7,6 +7,11 @@ on:
       - '**.md'
       - '.gitignore'
   workflow_dispatch:
+    inputs:
+      kernel_version:
+        description: '内核版本 (�? 6.1.177)'
+        default: '6.1.177'
+        type: string
 
 permissions:
   contents: write
@@ -26,26 +31,30 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq \
             gcc-aarch64-linux-gnu flex bison bc \
-            libssl-dev kmod cpio rsync u-boot-tools
+            libssl-dev kmod cpio rsync \
+            u-boot-tools
 
       - name: Clone Amlogic-patched kernel source
         run: |
+          KVER="${{ github.event.inputs.kernel_version || '6.1.177' }}"
+          # unifreq �? fork �? Amlogic 补丁，直接用 main 分支
           git clone --depth=1 --branch main \
             https://github.com/unifreq/linux-6.1.y.git linux-src
-          cd linux-src
-          KVER=$(make kernelversion)
           echo "KERNEL_VERSION=${KVER}" >> $GITHUB_ENV
-          echo "Kernel version: ${KVER}"
 
       - name: Apply ophub kernel config
         run: |
           cd linux-src
           wget -q "https://raw.githubusercontent.com/ophub/kernel/main/kernel-config/release/stable/config-6.1" -O .config
+
+          # 确认 GPU 驱动已启�?
           grep -q "CONFIG_DRM_LIMA=m" .config || echo "CONFIG_DRM_LIMA=m" >> .config
           grep -q "CONFIG_DRM_MESON=y" .config || echo "CONFIG_DRM_MESON=y" >> .config
           grep -q "CONFIG_DRM_MESON_DW_HDMI=y" .config || echo "CONFIG_DRM_MESON_DW_HDMI=y" >> .config
+
           make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- olddefconfig
-          echo "=== GPU config ==="
+
+          echo "=== GPU config verification ==="
           grep -E "CONFIG_DRM_LIMA|CONFIG_DRM_MESON" .config
 
       - name: Compile kernel
@@ -62,8 +71,10 @@ jobs:
           find . -name "lima.ko" -ls
           echo "=== meson-drm ==="
           find . -name "meson_drm.ko" -ls
+          echo "=== panfrost.ko ==="
+          find . -name "panfrost.ko" -ls 2>/dev/null || true
 
-      - name: Package kernel
+      - name: Package kernel debs
         run: |
           cd linux-src
           export ARCH=arm64
@@ -74,21 +85,24 @@ jobs:
 
           mkdir -p /tmp/deb-pkg/boot /tmp/deb-pkg/usr/lib/modules
 
+          # 复制内核镜像
           cp arch/arm64/boot/Image.gz /tmp/deb-pkg/boot/vmlinuz-${KERNEL_RELEASE}
           cp arch/arm64/boot/Image.gz /tmp/deb-pkg/boot/zImage
           cp .config /tmp/deb-pkg/boot/config-${KERNEL_RELEASE}
           cp System.map /tmp/deb-pkg/boot/System.map-${KERNEL_RELEASE}
 
+          # 安装模块
           make INSTALL_MOD_PATH=/tmp/deb-pkg/usr modules_install
           make INSTALL_DTBS_PATH=/tmp/deb-pkg/boot/dtb dtbs_install
 
+          # 打包 tar.gz
           cd /tmp/deb-pkg
           tar czf /tmp/kernel-${KERNEL_RELEASE}-gpu.tar.gz .
 
-          echo "=== Package ==="
+          echo "=== Package contents ==="
+          tar tzf /tmp/kernel-${KERNEL_RELEASE}-gpu.tar.gz | head -30
+          echo "Total files: $(tar tzf /tmp/kernel-${KERNEL_RELEASE}-gpu.tar.gz | wc -l)"
           echo "Size: $(ls -lh /tmp/kernel-${KERNEL_RELEASE}-gpu.tar.gz | awk '{print $5}')"
-          echo "Modules: $(find . -name '*.ko' | wc -l) .ko files"
-          echo "lima.ko: $(find . -name 'lima.ko')"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -104,13 +118,13 @@ jobs:
           name: "GPU Kernel ${{ env.KERNEL_RELEASE }}"
           files: /tmp/kernel-${{ env.KERNEL_RELEASE }}-gpu.tar.gz
           body: |
-            ## B860AV2.1-A GPU Kernel
+            ## B860AV2.1-A GPU 加速内�?
 
-            - Version: ${{ env.KERNEL_RELEASE }}
-            - Source: unifreq/linux-6.1.y
-            - GPU: Mali-450 (lima) + DRM_MESON
+            - 内核版本: ${{ env.KERNEL_RELEASE }}
+            - 源码: unifreq/linux-6.1.y (�? Amlogic 补丁)
+            - GPU: Mali-450 lima + Mesa 用户态驱�?
 
-            ### Install
+            ### 安装方法
             ```bash
             tar xzf kernel-${{ env.KERNEL_RELEASE }}-gpu.tar.gz -C /
             update-initramfs -u -k ${{ env.KERNEL_RELEASE }}
