@@ -58,7 +58,7 @@ jobs:
           cd linux-src
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
-          make -j$(nproc) Image.gz modules dtbs 2>&1 | tail -20
+          make -j$(nproc) Image.gz modules dtbs
 
       - name: Verify GPU modules
         run: |
