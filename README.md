@@ -1,4 +1,5 @@
 # B860AV2.1-A GPU 加速内核
+![Build](https://github.com/LIyang-linux/B860AV2.1-A-kernel/actions/workflows/build-kernel.yml/badge.svg)
 
 为中兴 B860AV2.1-A (S905L3-B) 定制的 6.1.y LTS 内核，启用 **Mali-450 GPU 加速**。
 
@@ -22,7 +23,7 @@ CONFIG_DRM_LIMA=m           # Mali-450 GPU
 
 内核编译成功后会发布到 [Release](https://github.com/LIyang-linux/B860AV2.1-A-kernel/releases) 标签 `kernel-gpu`。
 
-B860AV2.1-A Armbian CI 会自动检测并优先使用 GPU 内核。手动安装：
+该内核会被 Armbian CI 自动使用，同时也支持手动安装：
 
 ```bash
 wget https://github.com/LIyang-linux/B860AV2.1-A-kernel/releases/download/kernel-gpu/kernel-6.1.x-gpu.tar.gz
@@ -54,3 +55,4 @@ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc) Image.gz modules dtb
 
 - [unifreq/linux-6.1.y](https://github.com/unifreq/linux-6.1.y) - 含 Amlogic 补丁的内核源码
 - [ophub/kernel](https://github.com/ophub/kernel) - 内核配置
+- [B860AV2.1-A](https://github.com/LIyang-linux/B860AV2.1-A) - Armbian 线刷镜像项目
