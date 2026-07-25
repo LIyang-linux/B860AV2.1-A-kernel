@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       kernel_version:
-        description: '内核版本 (如 6.1.177)'
+        description: '内核版本 (�? 6.1.177)'
         default: '6.1.177'
         type: string
 
@@ -37,7 +37,7 @@ jobs:
       - name: Clone Amlogic-patched kernel source
         run: |
           KVER="${{ github.event.inputs.kernel_version || '6.1.177' }}"
-          # unifreq 的 fork 含 Amlogic 补丁，直接用 main 分支
+          # unifreq �? fork �? Amlogic 补丁，直接用 main 分支
           git clone --depth=1 --branch main \
             https://github.com/unifreq/linux-6.1.y.git linux-src
           echo "KERNEL_VERSION=${KVER}" >> $GITHUB_ENV
@@ -47,7 +47,7 @@ jobs:
           cd linux-src
           wget -q "https://raw.githubusercontent.com/ophub/kernel/main/kernel-config/release/stable/config-6.1" -O .config
 
-          # 确认 GPU 驱动已启用
+          # 确认 GPU 驱动已启�?
           grep -q "CONFIG_DRM_LIMA=m" .config || echo "CONFIG_DRM_LIMA=m" >> .config
           grep -q "CONFIG_DRM_MESON=y" .config || echo "CONFIG_DRM_MESON=y" >> .config
           grep -q "CONFIG_DRM_MESON_DW_HDMI=y" .config || echo "CONFIG_DRM_MESON_DW_HDMI=y" >> .config
@@ -92,7 +92,7 @@ jobs:
           cp System.map /tmp/deb-pkg/boot/System.map-${KERNEL_RELEASE}
 
           # 安装模块
-          make INSTALL_MOD_PATH=/tmp/deb-pkg modules_install
+          make INSTALL_MOD_PATH=/tmp/deb-pkg/usr modules_install
           make INSTALL_DTBS_PATH=/tmp/deb-pkg/boot/dtb dtbs_install
 
           # 打包 tar.gz
@@ -118,11 +118,11 @@ jobs:
           name: "GPU Kernel ${{ env.KERNEL_RELEASE }}"
           files: /tmp/kernel-${{ env.KERNEL_RELEASE }}-gpu.tar.gz
           body: |
-            ## B860AV2.1-A GPU 加速内核
+            ## B860AV2.1-A GPU 加速内�?
 
             - 内核版本: ${{ env.KERNEL_RELEASE }}
-            - 源码: unifreq/linux-6.1.y (含 Amlogic 补丁)
-            - GPU: Mali-450 lima + Mesa 用户态驱动
+            - 源码: unifreq/linux-6.1.y (�? Amlogic 补丁)
+            - GPU: Mali-450 lima + Mesa 用户态驱�?
 
             ### 安装方法
             ```bash
