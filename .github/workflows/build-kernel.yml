@@ -42,10 +42,16 @@ jobs:
           echo "KERNEL_VERSION=${KVER}" >> $GITHUB_ENV
           echo "Kernel version: ${KVER}"
 
-      - name: Apply ophub kernel config
+      - name: Apply slim kernel config
         run: |
           cd linux-src
+          # Download ophub base config
           wget -q "https://raw.githubusercontent.com/ophub/kernel/main/kernel-config/release/stable/config-6.1" -O .config
+          # Download slim fragment (only S905L3-B essentials)
+          wget -q "https://raw.githubusercontent.com/LIyang-linux/B860AV2.1-A-kernel/slim/kernel-config/slim/config-6.1-slim" -O /tmp/slim.cfg
+          # Merge: slim settings override ophub defaults
+          ./scripts/kconfig/merge_config.sh -m .config /tmp/slim.cfg 2>/dev/null || true
+          # Ensure GPU drivers enabled
           grep -q "CONFIG_DRM_LIMA=m" .config || echo "CONFIG_DRM_LIMA=m" >> .config
           grep -q "CONFIG_DRM_MESON=y" .config || echo "CONFIG_DRM_MESON=y" >> .config
           grep -q "CONFIG_DRM_MESON_DW_HDMI=y" .config || echo "CONFIG_DRM_MESON_DW_HDMI=y" >> .config
