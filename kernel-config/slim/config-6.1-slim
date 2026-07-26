@@ -40,35 +40,33 @@
 # CONFIG_ARCH_XGENE is not set
 # CONFIG_ARCH_ZYNQMP is not set
 
-# ====== Filesystems (ext4 + vfat + tmpfs only) ======
-# CONFIG_BTRFS_FS is not set
-# CONFIG_XFS_FS is not set
+# ====== Filesystems (keep common, remove embedded-only) ======
+# CONFIG_JFFS2_FS is not set
+# CONFIG_UBIFS_FS is not set
+# CONFIG_CRAMFS is not set
+# CONFIG_ROMFS_FS is not set
+# CONFIG_MINIX_FS is not set
 # CONFIG_JFS_FS is not set
 # CONFIG_REISERFS_FS is not set
-# CONFIG_NILFS2_FS is not set
-# CONFIG_F2FS_FS is not set
-# CONFIG_BCACHEFS_FS is not set
-# CONFIG_GFS2_FS is not set
-# CONFIG_OCFS2_FS is not set
-# CONFIG_UBIFS_FS is not set
-# CONFIG_JFFS2_FS is not set
-# CONFIG_CRAMFS is not set
-# CONFIG_SQUASHFS is not set
-# CONFIG_ROMFS_FS is not set
-# CONFIG_NFS_FS is not set
-# CONFIG_NFSD is not set
-# CONFIG_CIFS is not set
-# CONFIG_CIFS_SMB2 is not set
-# CONFIG_AFS_FS is not set
-# CONFIG_9P_FS is not set
-# CONFIG_NTFS3_FS is not set
-# CONFIG_EROFS_FS is not set
-# CONFIG_CDFS_FS is not set
-# CONFIG_UDF_FS is not set
-# CONFIG_ISO9660_FS is not set
 # CONFIG_HFS_FS is not set
 # CONFIG_HFSPLUS_FS is not set
-# CONFIG_MINIX_FS is not set
+# CONFIG_OMFS_FS is not set
+# CONFIG_QNX4FS_FS is not set
+# CONFIG_QNX6FS_FS is not set
+# CONFIG_SYSV_FS is not set
+# CONFIG_UFS_FS is not set
+# CONFIG_EROFS_FS is not set
+# CONFIG_NILFS2_FS is not set
+# CONFIG_GFS2_FS is not set
+# CONFIG_OCFS2_FS is not set
+# CONFIG_BCACHEFS_FS is not set
+# CONFIG_AFS_FS is not set
+# CONFIG_9P_FS is not set
+# CONFIG_ORANGEFS_FS is not set
+# CONFIG_ECRYPT_FS is not set
+# CONFIG_CEPH_FS is not set
+# CONFIG_PSTORE is not set
+# CONFIG_DAX is not set
 
 # ====== Network drivers (stmmac + PHYs only) ======
 # CONFIG_NET_VENDOR_3COM is not set
@@ -140,7 +138,7 @@
 # CONFIG_NET_VENDOR_WIZNET is not set
 # CONFIG_NET_VENDOR_XILINX is not set
 
-# ====== WiFi drivers (only what box may need) ======
+# ====== WiFi drivers (keep common USB/SDIO chips) ======
 # CONFIG_WLAN_VENDOR_ADMTEK is not set
 # CONFIG_WLAN_VENDOR_ATH is not set
 # CONFIG_WLAN_VENDOR_ATMEL is not set
@@ -149,17 +147,15 @@
 # CONFIG_WLAN_VENDOR_INTEL is not set
 # CONFIG_WLAN_VENDOR_INTERSIL is not set
 # CONFIG_WLAN_VENDOR_MARVELL is not set
-# CONFIG_WLAN_VENDOR_MEDIATEK is not set
 # CONFIG_WLAN_VENDOR_MICROCHIP is not set
 # CONFIG_WLAN_VENDOR_PURELIFI is not set
 # CONFIG_WLAN_VENDOR_QUANTENNA is not set
-# CONFIG_WLAN_VENDOR_RALINK is not set
-# CONFIG_WLAN_VENDOR_REALTEK is not set
 # CONFIG_WLAN_VENDOR_RSI is not set
 # CONFIG_WLAN_VENDOR_SILABS is not set
 # CONFIG_WLAN_VENDOR_ST is not set
 # CONFIG_WLAN_VENDOR_TI is not set
 # CONFIG_WLAN_VENDOR_ZYDAS is not set
+# Keep: RALINK(MT7601U), REALTEK(RTL8188EUS/RTL8821CU), MEDIATEK(MT7662)
 
 # ====== Sound (only meson SoC audio) ======
 # CONFIG_SND_HDA_INTEL is not set
@@ -201,13 +197,7 @@
 # ====== Media (only Amlogic VPU, no cameras/TV tuners) ======
 # CONFIG_MEDIA_SUPPORT is not set
 
-# ====== Misc (keep SoC essentials, remove only unnecessary) ======
-# CONFIG_VIRTIO_PCI is not set
-# CONFIG_VIRTIO_BALLOON is not set
-# CONFIG_VIRTIO_BLK is not set
-# CONFIG_VIRTIO_NET is not set
-# CONFIG_VIRTIO_CONSOLE is not set
-# CONFIG_KVM is not set
+# ====== Misc (keep essentials, remove niche) ======
 # CONFIG_BLK_DEV_NVME is not set
 # CONFIG_BLK_DEV_SD is not set
 # CONFIG_BLK_DEV_SR is not set
@@ -216,8 +206,6 @@
 # CONFIG_RAID_ATTRS is not set
 # CONFIG_BLK_DEV_DM is not set
 # CONFIG_BLK_DEV_MD is not set
-# CONFIG_USB_NET_DRIVERS is not set
-# CONFIG_USB_SERIAL is not set
 # CONFIG_INFINIBAND is not set
 # CONFIG_FIREWIRE is not set
 # CONFIG_NFC is not set
@@ -234,4 +222,4 @@
 # CONFIG_MELLANOX_PLATFORM is not set
 # CONFIG_SURFACE_PLATFORMS is not set
 # CONFIG_ANDROID_BINDER_IPC is not set
-# CONFIG_STAGING is not set
+# Keep: virtio, bluetooth, staging (meson-vdec), RTC, thermal, watchdog, leds, gpio
